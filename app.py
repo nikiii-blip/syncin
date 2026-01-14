@@ -1,95 +1,87 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- CONFIGURATION (APNI KEY YAHAN DAALO) ---
-# 🔴 IMPORTANT: Replace the text below with your actual API Key
-genai.configure(api_key="AIzaSyBbJHA4HEIOLt-Ke9zWlfmdcM7fJWZlN2I")
+# --- PAGE CONFIG (SyncIn Branding) ---
+st.set_page_config(page_title="SyncIn | Career Re-Engineering", page_icon="🔗", layout="wide")
 
-# --- PAGE SETUP (Making it look professional) ---
-st.set_page_config(
-    page_title="Syncin | SYNC-IN Your Future",
-    page_icon="🚀",
-    layout="wide", # Wide mode looks more professional
-    initial_sidebar_state="expanded"
-)
+# Custom CSS for "SyncIn" Sexy Look
+st.markdown("""
+    <style>
+    .main { background-color: #050505; color: #ffffff; }
+    .stButton>button {
+        background: linear-gradient(45deg, #00ffa3, #03a9f4);
+        color: black; border-radius: 12px; border: none;
+        font-weight: bold; padding: 12px 30px; width: 100%;
+        transition: 0.5s;
+    }
+    .stButton>button:hover { transform: scale(1.02); box-shadow: 0px 0px 20px #00ffa3; }
+    .stTextInput>div>div>input, .stNumberInput>div>div>input {
+        background-color: #121212; color: white; border-radius: 8px; border: 1px solid #333;
+    }
+    .syncin-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px; border-radius: 20px;
+        border: 1px solid rgba(0, 255, 163, 0.2);
+        backdrop-filter: blur(10px);
+    }
+    h1, h2, h3 { color: #00ffa3; font-family: 'Inter', sans-serif; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Custom CSS to hide Streamlit branding and make it look cleaner
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-# --- SIDEBAR (The "About" Section) ---
+# --- SIDEBAR ---
 with st.sidebar:
-    st.title("🚀SyncIn")
-    st.markdown("### The Goal Re-engineering Engine")
-    st.write("Most career advice is generic. This engine reverse-engineers your path based on your *actual* constraints.")
+    st.image("https://img.icons8.com/nolan/128/connect.png", width=80)
+    st.title("SyncIn Admin")
+    api_key = st.text_input("AIzaSyBbJHA4HEIOLt-Ke9zWlfmdcM7fJWZlN2I", type="password")
     st.write("---")
-    st.markdown("**Built for the zero-budget hustler.**")
-    st.caption("Powered by Google Gemini AI")
+    st.markdown("### Mission\nReverse-engineering career success for everyone.")
 
-# --- MAIN PAGE UI ---
-st.title("⚡ Reverse-Engineer Your Dream Career")
-st.markdown("##### Tell us the goal. We calculate the fastest, cheapest path back to today.")
-st.divider()
+# --- MAIN UI ---
+st.title("🔗 SyncIn")
+st.markdown("#### *Re-Engineering the path to your dreams.*")
+st.write("---")
 
-# Using columns to create a dashboard feel instead of a boring form
-col1, col2, col3 = st.columns(3)
+# Layout
+col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("🎯 The Destination")
-    dream_role = st.text_input("Dream Role", placeholder="e.g. AI Engineer at Google")
-    current_status = st.text_input("Current Status", placeholder="e.g. B.Tech 3rd Year, no coding xp")
+    dream_role = st.text_input("What is your Dream Goal?", placeholder="e.g. Senior Data Scientist")
+    current_state = st.text_input("Your Current Status?", placeholder="e.g. Student, No experience")
 
 with col2:
-    st.subheader("⏳ The Constraints")
-    hours = st.slider("Hours Available (Daily)", 1, 12, 4)
-    deadline = st.selectbox("Target Timeline", ["3 Months (Aggressive)", "6 Months (Realistic)", "1 Year (Relaxed)"])
+    budget = st.text_input("Budget (e.g. 0, ₹10k, or No Limit)")
+    time_avail = st.slider("Daily Hours for Study", 1, 15, 4)
 
-with col3:
-    st.subheader("💰 The Fuel")
-    budget_type = st.radio("Budget Constraint", ["₹0 (Free Resources Only)", "Low Budget (<₹5k)", "High Budget (>₹20k)"])
-    passion = st.text_input("Key Interests/Passions", placeholder="e.g. Problem solving, Gaming")
-
-st.divider()
-
-# --- THE AI BUTTON ---
-generate_btn = st.button("🚀 Blueprint Generate Karo (Generate Blueprint)", type="primary", use_container_width=True)
-
-# --- AI LOGIC ---
-if generate_btn:
-    if not dream_role or not current_status:
-        st.error("Please specify a dream role and current status to begin.")
+# THE ACTION
+if st.button("SYNC MY FUTURE 🚀"):
+    if not api_key:
+        st.error("Bhai, Sidebar mein API Key daal pehle!")
+    elif not dream_role:
+        st.warning("Dream role toh likh do!")
     else:
-        # Using the fast, free model
-        model = genai.GenerativeModel('gemini-3-pro preview')
-        
-        # A professional system prompt to ensure sexy output structure
-        system_prompt = f"""
-        Act as an elite Career Strategy AI. Reverse-engineer the path for a user currently serving as "{current_status}" to become a "{dream_role}".
-        
-        Constraints: {hours} hours/day, Timeline: {deadline}, Budget: {budget_type}. Interests: {passion}.
-        
-        You must provide a structured report with these exact sections in bold:
-        1. **🚨 The Reality Check** (Is this feasible given constraints? Be honest using math.)
-        2. **🧩 The Skill Gap Matrix** (What they have vs. what they need.)
-        3. **🗺️ The Phase-Wise Roadmap** (Break down into 3 phases. IMPORTANT: Because budget is {budget_type}, suggest ONLY relevant resources like free YouTube playlists, documentation, or specific cheap courses.)
-        4. **⚡ The "Hack"** (One unconventional tip to speed this up.)
-        
-        Use emojis, bold text, and clear formatting to make it scannable and professional.
-        """
-        
-        with st.spinner("⚙️ Crunching the data, mapping the skills, finding free resources..."):
-            try:
-                response = model.generate_content(system_prompt)
-                st.success("Blueprint Generated Successfully!")
-                st.markdown("---")
-                # Displaying the result in a nice container
-                with st.container(border=True):
-                    st.markdown(response.text)
-            except Exception as e:
-                st.error(f"An error occurred: {e}. Check your API key.")
+        try:
+            # Using Gemini 2.0 Flash (Latest)
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-2.0-flash') 
+            
+            prompt = f"""
+            System: You are 'SyncIn AI', a high-end career re-engineering agent.
+            Task: Reverse-engineer the path to {dream_role} for someone who is {current_state}.
+            Constraints: Budget is {budget} and they have {time_avail} hours/day.
+            
+            Output Style: 
+            1. **The SyncIn Reality Check**: Is it possible in 6-12 months? Be blunt.
+            2. **Skill Gap Analysis**: What are the top 3 missing pieces?
+            3. **The Zero-Budget Roadmap**: Suggest ONLY high-quality free YouTube/OpenSource links.
+            4. **Pro Tip**: One secret hack to get noticed.
+            """
+            
+            with st.spinner("Syncing with the future..."):
+                response = model.generate_content(prompt)
+                st.markdown('<div class="syncin-card">', unsafe_allow_html=True)
+                st.subheader("🏁 Your Personalized Blueprint")
+                st.markdown(response.text)
+                st.markdown('</div>', unsafe_allow_html=True)
+                
+        except Exception as e:
+            st.error(f"Error: {e}. Model 'gemini-2.0-flash' shayad tere region mein na ho, check kar.")
