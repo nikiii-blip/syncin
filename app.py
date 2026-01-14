@@ -128,8 +128,8 @@ elif st.session_state.flow == 'yes':
         else:
             try:
                 client = Groq(api_key=api_key)
-               # Updated Prompt inside the 'yes' flow:
-prompt = f"""
+                # THE PROMPT IS NOW INSIDE THE TRY BLOCK PROPERLY
+                prompt = f"""
 Identify as 'SyncIn Strategic Engine'. You are blunt, professional, and data-driven. 
 Avoid excessive emojis. Focus on the ROI of time and money.
 
