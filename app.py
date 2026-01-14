@@ -32,7 +32,7 @@ st.markdown("""
 with st.sidebar:
     st.image("https://img.icons8.com/nolan/128/connect.png", width=80)
     st.title("SyncIn Admin")
-    api_key = st.text_input("AIzaSyBbJHA4HEIOLt-Ke9zWlfmdcM7fJWZlN2I", type="password")
+    api_key = st.text_input("api key dal", type="password")
     st.write("---")
     st.markdown("### Mission\nReverse-engineering career success for everyone.")
 
