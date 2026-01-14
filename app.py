@@ -60,7 +60,7 @@ if st.button("SYNC MY FUTURE 🚀"):
         st.warning("Dream role toh likh do!")
     else:
         try:
-            # Using Gemini 2.0 Flash (Latest)
+            # Using Gemini pro
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-2.0-flash') 
             
