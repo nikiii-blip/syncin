@@ -1,87 +1,143 @@
 import streamlit as st
-import google.generativeai as genai
+from groq import Groq
 
-# --- PAGE CONFIG (SyncIn Branding) ---
-st.set_page_config(page_title="SyncIn | Career Re-Engineering", page_icon="🔗", layout="wide")
+# --- SYNCIN PREMIUM SETUP ---
+st.set_page_config(page_title="SyncIn | SYNC-IN your career", page_icon="🔗", layout="centered")
 
-# Custom CSS for "SyncIn" Sexy Look
+# Custom CSS for the "Silicon Valley" Aesthetic
 st.markdown("""
     <style>
-    .main { background-color: #050505; color: #ffffff; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    
+    html, body, [class*="st-"] {
+        font-family: 'Inter', sans-serif;
+        background-color: #000000;
+        color: #E2E8F0;
+    }
+    
+    .stApp { background-color: #000000; }
+    
+    h1 {
+        font-weight: 800;
+        background: linear-gradient(90deg, #00FF9D 0%, #00B8FF 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3rem !important;
+    }
+
     .stButton>button {
-        background: linear-gradient(45deg, #00ffa3, #03a9f4);
-        color: black; border-radius: 12px; border: none;
-        font-weight: bold; padding: 12px 30px; width: 100%;
-        transition: 0.5s;
+        background: #111;
+        color: #00FF9D;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 700;
+        transition: 0.4s;
+        width: 100%;
     }
-    .stButton>button:hover { transform: scale(1.02); box-shadow: 0px 0px 20px #00ffa3; }
-    .stTextInput>div>div>input, .stNumberInput>div>div>input {
-        background-color: #121212; color: white; border-radius: 8px; border: 1px solid #333;
+
+    .stButton>button:hover {
+        border-color: #00FF9D;
+        box-shadow: 0px 0px 15px rgba(0, 255, 157, 0.3);
+        background: #00FF9D;
+        color: black;
     }
-    .syncin-card {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 25px; border-radius: 20px;
-        border: 1px solid rgba(0, 255, 163, 0.2);
-        backdrop-filter: blur(10px);
+
+    .card {
+        background: #0A0A0A;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid #1A1A1A;
+        margin-bottom: 20px;
     }
-    h1, h2, h3 { color: #00ffa3; font-family: 'Inter', sans-serif; }
+
+    input { background-color: #0A0A0A !important; border: 1px solid #333 !important; color: white !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.image("https://img.icons8.com/nolan/128/connect.png", width=80)
-    st.title("SyncIn Admin")
-    api_key = st.text_input("api key dal", type="password")
+# --- NAVIGATION LOGIC ---
+if 'flow' not in st.session_state:
+    st.session_state.flow = 'start'
+
+# --- START PAGE ---
+if st.session_state.flow == 'start':
+    st.title("🔗 SyncIn")
+    st.markdown("### Hey buddy, do you know what you want to be?")
+    st.write("Let's map your future together.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("YES, I KNOW 🎯"):
+            st.session_state.flow = 'yes'
+            st.rerun()
+    with col2:
+        if st.button("NO, NOT YET 🤔"):
+            st.session_state.flow = 'no'
+            st.rerun()
+
+# --- NO BRANCH: EMOTIONAL SUPPORT ---
+elif st.session_state.flow == 'no':
+    st.title("🔗 SyncIn")
+    st.markdown("## Please don't be sad. It's a long journey! 🌊")
+    st.write("Figuring it out is the hardest part. We are building **Career Games** to help you play and discover.")
     st.write("---")
-    st.markdown("### Mission\nReverse-engineering career success for everyone.")
+    email = st.text_input("Drop your email, we'll reach out when we're ready:")
+    if st.button("Notify Me"):
+        st.success("All the best, bud! We'll sync up soon.")
+    if st.button("← Back"):
+        st.session_state.flow = 'start'
+        st.rerun()
 
-# --- MAIN UI ---
-st.title("🔗 SyncIn")
-st.markdown("#### *Re-Engineering the path to your dreams.*")
-st.write("---")
+# --- YES BRANCH: THE AI ENGINE ---
+elif st.session_state.flow == 'yes':
+    st.title("🔗 SyncIn")
+    st.write("### Let's Re-Engineer your path. ⚡")
+    
+    api_key = st.text_input("Enter Groq API Key (Keep it secret)", type="password")
+    
+    with st.container():
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        with c1:
+            goal = st.text_input("Dream Role", placeholder="e.g. VC / Founder")
+            past = st.text_input("Current Education", placeholder="e.g. B.Com 2nd Year")
+        with c2:
+            budget = st.text_input("Budget (INR)", placeholder="e.g. ₹5000")
+            time_val = st.slider("Daily Hours", 1, 15, 4)
+        
+        skills = st.text_area("Existing Skills")
+        passion = st.text_input("Your Passion")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Layout
-col1, col2 = st.columns(2)
-
-with col1:
-    dream_role = st.text_input("What is your Dream Goal?", placeholder="e.g. Senior Data Scientist")
-    current_state = st.text_input("Your Current Status?", placeholder="e.g. Student, No experience")
-
-with col2:
-    budget = st.text_input("Budget (e.g. 0, ₹10k, or No Limit)")
-    time_avail = st.slider("Daily Hours for Study", 1, 15, 4)
-
-# THE ACTION
-if st.button("SYNC MY FUTURE 🚀"):
-    if not api_key:
-        st.error("Bhai, Sidebar mein API Key daal pehle!")
-    elif not dream_role:
-        st.warning("Dream role toh likh do!")
-    else:
-        try:
-            # Using Gemini pro
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-2.0-flash') 
-            
-            prompt = f"""
-            System: You are 'SyncIn AI', a high-end career re-engineering agent.
-            Task: Reverse-engineer the path to {dream_role} for someone who is {current_state}.
-            Constraints: Budget is {budget} and they have {time_avail} hours/day.
-            
-            Output Style: 
-            1. **The SyncIn Reality Check**: Is it possible in 6-12 months? Be blunt.
-            2. **Skill Gap Analysis**: What are the top 3 missing pieces?
-            3. **The Zero-Budget Roadmap**: Suggest ONLY high-quality free YouTube/OpenSource links.
-            4. **Pro Tip**: One secret hack to get noticed.
-            """
-            
-            with st.spinner("Syncing with the future..."):
-                response = model.generate_content(prompt)
-                st.markdown('<div class="syncin-card">', unsafe_allow_html=True)
-                st.subheader("🏁 Your Personalized Blueprint")
-                st.markdown(response.text)
-                st.markdown('</div>', unsafe_allow_html=True)
+    if st.button("SYNC MY FUTURE 🚀"):
+        if not api_key:
+            st.error("Add your API key first!")
+        else:
+            try:
+                client = Groq(api_key=api_key)
+                # This prompt forces the AI to give you the Flowchart and LinkedIn IDs
+                prompt = f"""
+                You are SyncIn AI Career Strategist. 
+                Goal: {goal}. Background: {past}. Skills: {skills}. Budget: {budget}. Time: {time_val} hrs/day.
                 
-        except Exception as e:
-            st.error(f"Error: {e}. Model 'gemini-2.0-flash' shayad tere region mein na ho, check kar.")
+                Respond in English with:
+                1. Reality Check (Math-based feasibility)
+                2. Step-by-Step Roadmap (Phases)
+                3. Courses (Specific free/cheap YouTube or platform names)
+                4. Visual Flowchart (A 4-step written description of the flow)
+                5. LinkedIn Profiles: Suggest 3 specific job titles to search for on LinkedIn to find mentors.
+                """
+                with st.spinner("Calculating the optimal path..."):
+                    chat = client.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt}],
+                        model="llama-3.3-70b-specdec",
+                    )
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown(chat.choices[0].message.content)
+                    st.markdown('</div>', unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
+
+    if st.button("← Back"):
+        st.session_state.flow = 'start'
+        st.rerun()
