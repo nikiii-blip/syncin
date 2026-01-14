@@ -108,7 +108,6 @@ elif st.session_state.flow == 'yes':
     # API Key - Minimalist
     api_key = st.text_input("🔑 API ACCESS KEY", type="password")
     
-    st.markdown('<div class="sync-card">', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
         goal = st.text_input("TARGET ROLE", placeholder="e.g. Associate Product Manager")
