@@ -66,7 +66,7 @@ if generate_btn:
         st.error("Please specify a dream role and current status to begin.")
     else:
         # Using the fast, free model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-3-pro preview')
         
         # A professional system prompt to ensure sexy output structure
         system_prompt = f"""
