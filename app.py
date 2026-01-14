@@ -1,10 +1,9 @@
 import streamlit as st
 from groq import Groq
 
-# --- SYNCIN ELITE CONFIG ---
-st.set_page_config(page_title="SyncIn | Career OS", page_icon="🔗", layout="wide")
+# --- SYNCIN BRANDING & PREMIUM CSS ---
+st.set_page_config(page_title="SyncIn | Your Career Sibling", page_icon="🔗", layout="centered")
 
-# CUSTOM CSS: Premium Branding + Thick Slider Fix
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -19,7 +18,7 @@ st.markdown("""
     /* Perfect Centering for Start Page */
     .hero-container {
         display: flex; flex-direction: column; align-items: center;
-        justify-content: center; height: 75vh; text-align: center;
+        justify-content: center; height: 70vh; text-align: center;
     }
 
     h1 {
@@ -30,46 +29,40 @@ st.markdown("""
         margin-bottom: 0px;
     }
 
-    /* THE SLIDER FIX: Making the bar thick and emerald */
-    div[data-baseweb="slider"] {
-        padding-top: 25px;
-        padding-bottom: 25px;
-    }
-    div[data-baseweb="slider"] > div {
-        height: 8px !important; /* Thickens the bar */
-        background-color: #1A1A1A !important;
-    }
-    /* The part of the bar that is "filled" */
-    div[data-baseweb="slider"] > div > div > div {
-        background-color: #00FF9D !important;
-    }
-    /* The actual slider knob/dot */
+    /* THE SLIDER FIX: Thick & Emerald */
+    div[data-baseweb="slider"] { padding: 30px 0; }
+    div[data-baseweb="slider"] > div { height: 12px !important; background-color: #111 !important; border-radius: 10px; }
+    div[data-baseweb="slider"] > div > div > div { background-color: #00FF9D !important; }
     div[role="slider"] {
-        background-color: #00FF9D !important;
-        border: 2px solid #00FF9D !important;
-        height: 20px !important;
-        width: 20px !important;
+        background-color: #00FF9D !important; border: none !important;
+        height: 24px !important; width: 24px !important; box-shadow: 0 0 10px #00FF9D;
     }
 
     /* Premium Form Card */
     .sync-card {
         background: #0A0A0A; padding: 40px; border-radius: 30px;
-        border: 1px solid #1A1A1A; margin-top: 10px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        border: 1px solid #1A1A1A; margin-top: 5px;
     }
+    
+    .stTextInput, .stNumberInput, .stTextArea { margin-bottom: -15px !important; }
 
     .stButton>button {
-        background: transparent; color: #00FF9D; border: 1px solid #00FF9D;
-        border-radius: 8px; padding: 12px 40px; font-weight: 700;
-        transition: 0.3s ease-in-out;
+        background: #00FF9D; color: #000; border: none;
+        border-radius: 8px; padding: 12px 40px; font-weight: 800;
+        width: 100%; transition: 0.2s;
     }
-    .stButton>button:hover { background: #00FF9D; color: #000; box-shadow: 0 0 20px rgba(0, 255, 157, 0.4); }
+    .stButton>button:hover { background: #00cc7d; transform: translateY(-2px); }
 
-    /* Report Box Styling */
-    .report-output {
-        background: #0D0D0D; padding: 30px; border-radius: 15px;
-        border-left: 5px solid #00FF9D; line-height: 1.7;
+    /* Response Box */
+    .sibling-response {
+        background: #0D0D0D; padding: 30px; border-radius: 20px;
+        border-left: 6px solid #00FF9D; line-height: 1.6; font-size: 1.1rem;
     }
+
+    /* Table Styling for the "Depth" look */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; color: #E2E8F0; }
+    th { background-color: #111; color: #00FF9D; padding: 12px; text-align: left; border-bottom: 2px solid #222; }
+    td { padding: 12px; border-bottom: 1px solid #222; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -80,15 +73,17 @@ if 'flow' not in st.session_state:
 if st.session_state.flow == 'start':
     st.markdown('<div class="hero-container">', unsafe_allow_html=True)
     st.title("🔗 SyncIn")
-    st.markdown("<p style='font-size: 1.5rem; opacity: 0.6;'>Reverse-Engineering the Future of Work.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 1.5rem; opacity: 0.6;'>Your Smart Career Sibling.</p>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1.2, 1, 1.2])
+    col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
+        st.write("### Hey buddy, do you know what you want to be?")
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("YES, ACCESS SYSTEM"):
+        if st.button("YES, I HAVE A DREAM 🎯"):
             st.session_state.flow = 'yes'
             st.rerun()
-        if st.button("NO, NOT YET"):
+        st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
+        if st.button("NO, I'M LOST 🤔"):
             st.session_state.flow = 'no'
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
@@ -97,65 +92,74 @@ if st.session_state.flow == 'start':
 elif st.session_state.flow == 'no':
     st.markdown('<div class="hero-container">', unsafe_allow_html=True)
     st.title("🔗 SyncIn")
-    st.write("### Exploration is a strategic phase.")
-    st.write("Join the waitlist for **SyncIn Career Games** (Launch Q1 2026).")
-    email = st.text_input("Professional Email:", placeholder="you@company.com")
-    if st.button("SYNC ME IN"):
-        st.success("Priority Access Granted.")
+    st.write("### It's okay to be lost. That's where discovery happens.")
+    st.write("I'm building **Career Games** to help you figure it out. Drop your email.")
+    email = st.text_input("Your Email:", placeholder="bud@example.com")
+    if st.button("NOTIFY ME"):
+        st.success("Got it. We'll find your path together.")
     if st.button("← BACK"):
         st.session_state.flow = 'start'
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- YES BRANCH (THE DEEP ANALYTICS) ---
+# --- YES BRANCH (THE SMART SIBLING ENGINE) ---
 elif st.session_state.flow == 'yes':
-    st.markdown("<h2 style='color: #00FF9D; font-weight: 800; text-align: center;'>STRATEGIC BLUEPRINT ENGINE</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #00FF9D; font-weight: 800;'>CAREER RE-ENGINEERING</h2>", unsafe_allow_html=True)
     
-    api_key = st.text_input("🔑 GROQ API KEY", type="password")
+    api_key = st.text_input("🔑 SYSTEM ACCESS KEY", type="password")
     
     st.markdown('<div class="sync-card">', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        goal = st.text_input("TARGET DESTINATION", placeholder="e.g. Marketing Manager @ Oracle")
-        past = st.text_input("CURRENT BASELINE", placeholder="e.g. BMS Graduate, Fresh")
-        budget = st.text_input("FINANCIAL BUDGET (INR)", value="0")
+        goal = st.text_input("WHAT'S THE DREAM?", placeholder="e.g. Marketing Manager at Google")
+        past = st.text_input("YOUR BACKGROUND", placeholder="e.g. 1st Year Student")
+        budget = st.text_input("BUDGET (INR)", value="0")
     with c2:
-        months = st.number_input("SYNC TIMELINE (MONTHS)", 1, 60, 12)
-        time_val = st.slider("DAILY BANDWIDTH (HOURS)", 1, 15, 5)
-        passion = st.text_input("DOMAIN VERTICAL", placeholder="e.g. Cloud, Fintech")
+        months = st.number_input("TIMELINE (MONTHS)", 1, 60, 12)
+        time_val = st.slider("HOURS YOU CAN COMMIT/DAY", 1, 15, 5)
+        passion = st.text_input("WHAT EXCITES YOU?")
+    
+    skills = st.text_area("SKILLS YOU ALREADY HAVE")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("RE-ENGINEER CAREER PATH"):
+    if st.button("SYNC MY FUTURE 🚀"):
         if not api_key:
-            st.error("Engine requires an API key for live market computation.")
-        elif len(goal) < 4 or goal.lower() in ["groot", "bdbbdjs", "asdf"]:
-            st.error("Input Validation Error: Please provide a valid professional role.")
+            st.error("Bud, I need the API key to run the numbers.")
+        elif len(goal) < 4:
+            st.error("Enter a real goal. Don't waste the engine's time.")
         else:
             try:
                 client = Groq(api_key=api_key)
-                # THE DEEP DATA PROMPT
                 prompt = f"""
-                You are a Lead Strategy Consultant at a Top-Tier Career Firm.
-                Profile: {past} targeting {goal} within {months} months on a budget of {budget}.
+                Identify as 'SyncIn', the user's smart, honest older sibling. Use a tone that is encouraging but brutally realistic. 
                 
-                Generate a data-heavy report using Markdown tables.
-                1. **FEASIBILITY ANALYSIS**: Compare 'Industry Standard Experience' vs 'User Baseline'.
-                2. **COMPETENCY MATRIX**: A table with Skill, Gap %, and Hours to Bridge.
-                3. **REVERSE QUARTERLY SPRINT**: Precise milestones from Month {months} back to Month 1.
-                4. **HACKING THE SYSTEM**: One specific 'Proof of Work' project and one LinkedIn Boolean string.
-                5. **VERDICT**: Be blunt. If {goal} usually requires 5 years and the user has 12 months, explain the 'Associate' pivot.
+                User Profile: 
+                - Goal: {goal}
+                - Education: {past}
+                - Skills: {skills}
+                - Passion: {passion}
+                - Timeline: {months} Months
+                - Budget: {budget}
+                - Time: {time_val} hrs/day
+                
+                Structure the response as follows:
+                1. **THE SIBLING REALITY CHECK**: Start with a blunt, metaphor-heavy paragraph. (e.g., 'Bud, you can't fly the plane the first day you see it'). Tell them if their goal is realistic or a hallucination.
+                2. **THE DATA (Why Not?)**: Use a Markdown Table to show the 'Industry Standards' vs 'User Status'. Include 'Years of Experience needed' and 'Skill Gap %'.
+                3. **THE SYNC-IN STRATEGY**: If the dream is too big for {months} months, tell them what goal is ACTUALLY achievable in this time. 
+                4. **THE CORE FOCUS**: List 3 specific things they must master.
+                5. **THE LONG-TERM SYNC**: When will the original dream ({goal}) actually be true? Give a realistic year.
                 """
-                with st.spinner("Analyzing high-fidelity hiring data..."):
+                with st.spinner("Analyzing the gaps..."):
                     chat = client.chat.completions.create(
                         messages=[{"role": "user", "content": prompt}],
                         model="llama-3.3-70b-versatile",
                     )
-                    st.markdown("<div class='report-output'>", unsafe_allow_html=True)
+                    st.markdown("<div class='sibling-response'>", unsafe_allow_html=True)
                     st.markdown(chat.choices[0].message.content)
                     st.markdown("</div>", unsafe_allow_html=True)
             except Exception as e:
-                st.error(f"Computation failure: {e}")
-    
+                st.error(f"Engine Failure: {e}")
+
     if st.button("← BACK"):
         st.session_state.flow = 'start'
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
