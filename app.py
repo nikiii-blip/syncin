@@ -18,7 +18,7 @@ st.markdown("""
     /* Perfect Centering for Start Page */
     .hero-container {
         display: flex; flex-direction: column; align-items: center;
-        justify-content: center; height: 70vh; text-align: center;
+        justify-content: center; height: 40vh; text-align: center;
     }
 
     h1 {
