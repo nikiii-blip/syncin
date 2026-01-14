@@ -74,18 +74,18 @@ if st.session_state.flow == 'start':
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("YES, I KNOW 🎯"):
+        if st.button("YES"):
             st.session_state.flow = 'yes'
             st.rerun()
     with col2:
-        if st.button("NO, NOT YET 🤔"):
+        if st.button("NO"):
             st.session_state.flow = 'no'
             st.rerun()
 
 # --- NO BRANCH: EMOTIONAL SUPPORT ---
 elif st.session_state.flow == 'no':
     st.title("🔗 SyncIn")
-    st.markdown("## Please don't be sad. It's a long journey! 🌊")
+    st.markdown("## Please don't be sad. It's a long journey!")
     st.write("Exploration is part of the process. We are building **Career Games** to help you discover your strengths through play.")
     st.write("---")
     email = st.text_input("Leave your email, and we'll sync up when the games are ready:", placeholder="buddy@example.com")
@@ -101,7 +101,7 @@ elif st.session_state.flow == 'no':
 # --- YES BRANCH: THE AI ENGINE ---
 elif st.session_state.flow == 'yes':
     st.title("🔗 SyncIn")
-    st.write("### Let's Re-Engineer your path. ⚡")
+    st.write("### Let's Re-Engineer your path.")
     
     api_key = st.text_input("Enter Groq API Key", type="password")
     
@@ -114,12 +114,13 @@ elif st.session_state.flow == 'yes':
         with c2:
             budget = st.text_input("Budget (INR)", placeholder="e.g. ₹0 or ₹5000")
             time_val = st.slider("Daily Hours for Study", 1, 15, 4)
+            months = st.number_input("Target Timeline (Months)", 1, 60, 12)
         
         skills = st.text_area("Skills you already have")
         passion = st.text_input("What truly excites you?")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("SYNC MY FUTURE 🚀"):
+    if st.button("let's SYNC-in"):
         if not api_key:
             st.error("Please provide your API key to start the engine.")
         elif not goal:
@@ -127,25 +128,46 @@ elif st.session_state.flow == 'yes':
         else:
             try:
                 client = Groq(api_key=api_key)
-                # THE UPDATED MODEL NAME: llama-3.3-70b-versatile
-                prompt = f"""
-                Identify as 'SyncIn Career Strategist'. 
-                Goal: {goal}. Education: {past}. Skills: {skills}. Budget: {budget}. Time: {time_val} hrs/day.
-                
-                Provide:
-                1. Reality Check (Is this mathematically possible?)
-                2. Phase-wise Roadmap (The most efficient path)
-                3. Top Resources (Specific free YouTube/Cheap courses)
-                4. Visual Flowchart Description (A clear 4-step logic flow)
-                5. LinkedIn Mentors: Titles of people to search for on LinkedIn.
-                """
+               # Updated Prompt inside the 'yes' flow:
+prompt = f"""
+Identify as 'SyncIn Strategic Engine'. You are blunt, professional, and data-driven. 
+Avoid excessive emojis. Focus on the ROI of time and money.
+
+User Profile:
+- Goal: {goal}
+- Background: {past}
+- Timeline: {months} months
+- Budget: {budget} INR
+- Commitment: {time_val} hours/day
+
+Provide the response in this EXACT structure:
+
+1. **THE MATH (Reality Check)**:
+   - Estimate total hours required to learn the missing skills for {goal}.
+   - Calculate: (Total Hours Required) / ({time_val} hours * 30 days * {months} months).
+   - Give a "Feasibility Score" out of 100. If it's below 50, tell them they need more years/hours.
+
+2. **THE REVERSE-ENGINEERED ROADMAP**:
+   - Work backwards from Month {months} to Month 1.
+   - What is the ONE thing they should be doing in the final month to get the job?
+
+3. **SYNCIN FLOWCHART (Visual Logic)**:
+   [Current Education] --> [Skill A] --> [Portfolio X] --> [Goal: {goal}]
+   (Design this as a text-based flow using arrows).
+
+4. **LINKEDIN SEARCH STRINGS**:
+   - Provide 3 EXACT strings the user should type into the LinkedIn search bar to find people who moved from {past} to {goal}.
+
+5. **RESOURCE AUDIT**:
+   - Based on a budget of {budget}, list only 3 high-impact links (No generic Coursera ads).
+"""
                 with st.spinner("Syncing with the future..."):
                     chat = client.chat.completions.create(
                         messages=[{"role": "user", "content": prompt}],
                         model="llama-3.3-70b-versatile",
                     )
                     st.markdown('<div class="card">', unsafe_allow_html=True)
-                    st.markdown("### 🗺️ Your Strategic Blueprint")
+                    st.markdown("### Your Strategic Blueprint")
                     st.markdown(chat.choices[0].message.content)
                     st.markdown('</div>', unsafe_allow_html=True)
             except Exception as e:
